@@ -4,7 +4,7 @@ Project: Making a Complex Number calculator
 Date: 2016-9-13
 
 Description: This is a simple program to reintroduce us to the concepts of programming in c++
-It can calculate +-/* of two complex numbers
+It can calculate (+,-,/,*) of two complex numbers
 */
 
 #include <iostream>  
