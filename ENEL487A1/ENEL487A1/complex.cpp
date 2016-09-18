@@ -1,0 +1,367 @@
+/**
+Programmer: Chris Pikula
+Project: Making a Complex Number calculator
+Date: 2016-9-13
+
+Description: This is a simple program to reintroduce us to the concepts of programming in c++
+It can calculate +-/* of two complex numbers
+*/
+
+#include <iostream>  
+#include <string>
+#include <cstdlib>
+#include <sstream>
+#include <fstream>
+#include <cmath>
+
+using std::cout;
+using std::cerr;
+using std::endl;
+using std::string;
+using std::cin;
+using std::ofstream;
+using std::ifstream;
+using std::streambuf;
+
+
+struct Complex 
+/**
+This is our data-structure that holds our complex number, 
+as well as holding the operator functions that perform the four basic
+arithmetic operations on them.
+*/
+{
+	double real;
+	double img;
+	struct Complex& operator+=(const Complex& rhs)
+	{
+		real += rhs.real;
+		img += rhs.img;
+		return *this;
+	}
+	struct Complex& operator-=(const Complex& rhs)
+	{
+		real -= rhs.real;
+		img -= rhs.img;
+		return *this;
+	}
+	struct Complex operator*(const Complex rhs)
+	{
+		Complex result;
+		result.real = real*rhs.real - img * rhs.img;
+		result.img = real*rhs.img + img * rhs.real;
+		return result;
+	}
+	struct Complex operator/(const Complex rhs)
+	{
+		Complex result;
+		result.real = (real*rhs.real + img*rhs.img) / (rhs.real*rhs.real + rhs.img*rhs.img);
+		result.img = (img*rhs.real - real*rhs.img) / (rhs.real*rhs.real + rhs.img*rhs.img);
+		return result;
+	}
+};
+inline Complex operator+(Complex lhs, const Complex& rhs)
+{
+	lhs += rhs;
+	return lhs;
+}
+inline Complex operator-(Complex lhs, const Complex& rhs)
+{
+	lhs -= rhs;
+	return lhs;
+}
+
+
+struct MathOperation 
+/**
+This is our data structure that is used to return our parsed data back 
+from our parse function, as well as it is used to pass the data to the
+calculator function
+*/
+{
+	char operation;
+	Complex first;
+	Complex second;
+};
+
+
+void usage(char const *progname)
+/**
+This is our function that tells the user how to use the program if they 
+don't enter in the correct number of parameters
+*/
+{
+	cerr << "Complex Number Calculator" << endl
+		 << "Usage: " << progname << " <input file> <output file>" << endl;
+	exit(1);
+}
+
+void consoleText()
+{
+	/**
+	This is our function that tells the user how to use the program 
+	once it starts
+	*/
+	cerr << "Type a letter to specify the aritmetic operator "
+		<< "(A, S, M, D)" << endl
+		<< "followed by two complex numbers expressed as "
+		<< "pairs of doubles." << endl 
+		<< "Type Q to quit." << endl;
+}
+
+bool stringstreamCont(std::istringstream &ss)
+/**
+This function makes sure that we still have inputs left in the stringstream.
+*/
+{
+	bool fail = false;
+	if (!ss)
+	{
+		cerr << "Too few operands ";
+		fail = true;
+	}
+	return fail;
+}
+bool stringstreamEnd(std::istringstream &ss)
+/**
+This function makes sure that we don't have inputs left in the stringstream.
+*/
+{
+	bool fail = false;
+	if (ss.rdbuf()->in_avail() > 1)
+	//test to see how many available charachters are left.
+	{
+		cerr << "Too many operands ";
+		fail = true;
+	}
+	return fail;
+}
+
+
+void printComplex(Complex input)
+/**
+This function prints out a Complex number
+*Note, it has to the first != to provide the proper output format
+	otherwise it outputs nan(ind)
+*In the next revision of the program, it should be moved to the 
+	<< operator.
+*/
+{
+	if (input.real != input.real)
+	{
+		cout << "nan";
+	}
+	else
+	{
+		cout << input.real;
+	}
+	cout << ' ';
+	if (input.img < 0 && !(input.img != input.img))
+	{
+		cout << '-';
+	}
+	else
+	{
+		cout << '+';
+	}
+	cout << " j ";
+	if (input.img != input.img)
+	{
+		cout << "nan";
+	}
+	else
+	{
+		cout << fabs(input.img);
+	}
+	cout << endl;
+}
+
+void printOperation(MathOperation Operation)
+{
+	printComplex(Operation.first);
+	cout << Operation.operation << endl;
+	printComplex(Operation.second);
+	cout << '=' << endl;
+	return;
+}
+
+MathOperation parseLine(string input)
+/**
+This function returns a MathOperation object when given a string input.
+If the string input is malformed, it outputs a 'F'ail operation type.
+It does some checks to make sure the stringstream still has the proper 
+number of entries to do this.
+*/
+{
+	MathOperation operation;
+	std::istringstream ss(input);
+	bool fail = false;
+	fail |= stringstreamCont(ss);
+	ss >> operation.operation;
+	if (operation.operation == 'a' || operation.operation == 'A')
+	{
+		operation.operation = 'A';
+	}
+	else if (operation.operation == 's' || operation.operation == 'S')
+	{
+		operation.operation = 'S';
+	}
+	else if (operation.operation == 'm' || operation.operation == 'M')
+	{
+		operation.operation = 'M';
+	}
+	else if (operation.operation == 'd' || operation.operation == 'D')
+	{
+		operation.operation = 'D';
+	}
+	else if (operation.operation == 'q' || operation.operation == 'Q')
+	{
+		operation.operation = 'Q';
+		return operation;
+	}
+	else
+	{
+		operation.operation = 'F';//for fail
+	}
+	fail |= stringstreamCont(ss);
+	ss >> operation.first.real;
+	fail |= stringstreamCont(ss);
+	ss >> operation.first.img;
+	fail |= stringstreamCont(ss);
+	ss >> operation.second.real;
+	fail |= stringstreamCont(ss);
+	ss >> operation.second.img;
+	fail |= stringstreamEnd(ss);
+	if (fail == true)
+	{
+		operation.operation = 'F';
+	}
+	return operation;
+}
+Complex calculator(MathOperation input)
+/**
+This is where we calculate our complex number given some correctly formatted
+MathOperation object.
+*/
+{
+	Complex result;
+	if (input.operation == 'A')
+	{
+		result = input.first + input.second;
+	}
+	else if (input.operation == 'S')
+	{
+		result = input.first - input.second;
+	} 
+	else if (input.operation == 'M')
+	{
+		result = input.first * input.second;
+	}
+	else if (input.operation == 'D')
+	{
+		result = input.first / input.second;
+	} 
+	return result;
+}
+
+int main(int argc, char ** argv)
+/**
+Our main program
+*/
+{
+	bool batchMode = false;
+	string input;
+	Complex result;
+	MathOperation parsedInput;
+	ofstream batchOutput;
+	streambuf *coutbuf = cout.rdbuf();
+	streambuf *cinbuf = cin.rdbuf();
+	ifstream batchInput;
+		if (!(argc == 3 || argc == 1))
+		usage(argv[0]);
+	if (argc == 3)
+	{
+		std::istringstream ss1(argv[1]);
+		std::istringstream ss2(argv[2]);
+		string firstArgument = "/n";
+		string secondArgument = "/n";
+		ss1 >> firstArgument;
+		ss2 >> secondArgument;
+		if (!ss1) 
+		{
+			cerr << "error converting first argument: " 
+				<< argv[1] << '\n';
+			exit(1);
+		}
+		if (!ss2)
+		{
+			cerr << "error converting second argument: " 
+				<< argv[2] << '\n';
+			exit(1);
+		}
+
+		batchMode = true;
+		//cout << "Hello world: " << firstArgument << " " 
+		//	<< secondArgument << endl;
+		batchInput.open(firstArgument.c_str());
+		batchOutput.open(secondArgument.c_str());
+		cout.rdbuf(batchOutput.rdbuf());
+		cin.rdbuf(batchInput.rdbuf());
+		
+	}
+	if (batchMode == false)
+	{
+		consoleText();
+	}
+	
+	do
+	{
+		if (cin.eof() == false)
+		{
+			getline(cin, input);
+		}
+		else
+		{
+			break;
+		}
+		/**
+		if (batchMode == false)
+		{
+			getline(cin, input);
+		}
+		else
+		{
+			if (batchInput.eof() == false)
+			{
+				getline(batchInput, input);
+			}
+			else
+			{
+				break;
+			}
+		}
+		*/
+		parsedInput = parseLine(input);
+		//printOperation(parsedInput);
+		if (parsedInput.operation == 'Q')
+		{
+			break;
+		}
+		else if (parsedInput.operation == 'F')
+		{
+			cerr << endl; 
+			cout << endl;
+			continue;
+		}
+		result = calculator(parsedInput);
+
+		printComplex(result);
+	} while (true);
+	batchInput.close();
+	batchOutput.close();
+
+	cin.rdbuf(cinbuf);
+	cout.rdbuf(coutbuf);
+
+}
+
