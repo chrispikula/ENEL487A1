@@ -73,6 +73,12 @@ inline Complex operator-(Complex lhs, const Complex& rhs)
 
 std::ostream& operator<<(std::ostream& os, const Complex& input)
 {
+	/**
+	This function prints out a Complex number via overloading the <<
+	operator
+	*Note, it has to the first != to provide the proper output format
+	otherwise it outputs nan(ind)
+	*/
 	if (input.real != input.real)
 	{
 		os << "nan";
@@ -167,49 +173,11 @@ This function makes sure that we don't have inputs left in the stringstream.
 }
 
 
-void printComplex(Complex input)
-/**
-This function prints out a Complex number
-*Note, it has to the first != to provide the proper output format
-	otherwise it outputs nan(ind)
-*In the next revision of the program, it should be moved to the 
-	<< operator.
-*/
-{
-	if (input.real != input.real)
-	{
-		cout << "nan";
-	}
-	else
-	{
-		cout << input.real;
-	}
-	cout << ' ';
-	if (input.img < 0 && !(input.img != input.img))
-	{
-		cout << '-';
-	}
-	else
-	{
-		cout << '+';
-	}
-	cout << " j ";
-	if (input.img != input.img)
-	{
-		cout << "nan";
-	}
-	else
-	{
-		cout << fabs(input.img);
-	}
-	cout << endl;
-}
-
 void printOperation(MathOperation Operation)
 {
-	printComplex(Operation.first);
+	cout << Operation.first;
 	cout << Operation.operation << endl;
-	printComplex(Operation.second);
+	cout << Operation.second;
 	cout << '=' << endl;
 	return;
 }
@@ -353,23 +321,6 @@ Our main program
 		{
 			break;
 		}
-		/**
-		if (batchMode == false)
-		{
-			getline(cin, input);
-		}
-		else
-		{
-			if (batchInput.eof() == false)
-			{
-				getline(batchInput, input);
-			}
-			else
-			{
-				break;
-			}
-		}
-		*/
 		parsedInput = parseLine(input);
 		//printOperation(parsedInput);
 		if (parsedInput.operation == 'Q')
@@ -394,3 +345,4 @@ Our main program
 
 }
 
+//END OF FILE
