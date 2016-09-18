@@ -71,6 +71,37 @@ inline Complex operator-(Complex lhs, const Complex& rhs)
 	return lhs;
 }
 
+std::ostream& operator<<(std::ostream& os, const Complex& input)
+{
+	if (input.real != input.real)
+	{
+		os << "nan";
+	}
+	else
+	{
+		os << input.real;
+	}
+	os << ' ';
+	if (input.img < 0 && !(input.img != input.img))
+	{
+		os << '-';
+	}
+	else
+	{
+		os << '+';
+	}
+	os << " j ";
+	if (input.img != input.img)
+	{
+		os << "nan";
+	}
+	else
+	{
+		os << fabs(input.img);
+	}
+	os << endl;
+	return os;
+}
 
 struct MathOperation 
 /**
@@ -83,8 +114,6 @@ calculator function
 	Complex first;
 	Complex second;
 };
-
-
 void usage(char const *progname)
 /**
 This is our function that tells the user how to use the program if they 
@@ -355,7 +384,7 @@ Our main program
 		}
 		result = calculator(parsedInput);
 
-		printComplex(result);
+		cout << result;
 	} while (true);
 	batchInput.close();
 	batchOutput.close();
