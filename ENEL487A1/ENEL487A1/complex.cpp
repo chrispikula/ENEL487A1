@@ -61,16 +61,21 @@ arithmetic operations on them.
 	}
 };
 inline Complex operator+(Complex lhs, const Complex& rhs)
+/**
+This function outputs the result of adding two Complex structs
+*/
 {
 	lhs += rhs;
 	return lhs;
 }
 inline Complex operator-(Complex lhs, const Complex& rhs)
+/**
+This function outputs the result of subtracting two Complex structs
+*/
 {
 	lhs -= rhs;
 	return lhs;
 }
-
 std::ostream& operator<<(std::ostream& os, const Complex& input)
 {
 	/**
@@ -171,17 +176,6 @@ This function makes sure that we don't have inputs left in the stringstream.
 	}
 	return fail;
 }
-
-
-void printOperation(MathOperation Operation)
-{
-	cout << Operation.first;
-	cout << Operation.operation << endl;
-	cout << Operation.second;
-	cout << '=' << endl;
-	return;
-}
-
 MathOperation parseLine(string input)
 /**
 This function returns a MathOperation object when given a string input.
@@ -298,8 +292,6 @@ Our main program
 		}
 
 		batchMode = true;
-		//cout << "Hello world: " << firstArgument << " " 
-		//	<< secondArgument << endl;
 		batchInput.open(firstArgument.c_str());
 		batchOutput.open(secondArgument.c_str());
 		cout.rdbuf(batchOutput.rdbuf());
@@ -322,7 +314,6 @@ Our main program
 			break;
 		}
 		parsedInput = parseLine(input);
-		//printOperation(parsedInput);
 		if (parsedInput.operation == 'Q')
 		{
 			break;
