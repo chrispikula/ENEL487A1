@@ -3,7 +3,8 @@ Programmer: Chris Pikula
 Project: Making a Complex Number calculator
 Date: 2016-9-13
 
-Description: This is a simple program to reintroduce us to the concepts of programming in c++
+Description: This is a simple program to reintroduce us to the 
+concepts of programming in c++
 It can calculate (+,-,/,*) of two complex numbers
 */
 
@@ -55,8 +56,10 @@ arithmetic operations on them.
 	struct Complex operator/(const Complex rhs)
 	{
 		Complex result;
-		result.real = (real*rhs.real + img*rhs.img) / (rhs.real*rhs.real + rhs.img*rhs.img);
-		result.img = (img*rhs.real - real*rhs.img) / (rhs.real*rhs.real + rhs.img*rhs.img);
+		result.real = (real*rhs.real + img*rhs.img) / 
+			(rhs.real*rhs.real + rhs.img*rhs.img);
+		result.img = (img*rhs.real - real*rhs.img) / 
+			(rhs.real*rhs.real + rhs.img*rhs.img);
 		return result;
 	}
 };
@@ -132,7 +135,8 @@ don't enter in the correct number of parameters
 */
 {
 	cerr << "Complex Number Calculator" << endl
-		 << "Usage: " << progname << " <input file> <output file>" << endl;
+		 << "Usage: " << progname << " <input file> <output file>" 
+		<< endl;
 	exit(1);
 }
 
