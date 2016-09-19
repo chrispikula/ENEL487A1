@@ -331,6 +331,8 @@ Our main program
 	batchInput.close();
 	batchOutput.close();
 
+	//returning our cin/cout streams back to their
+	//original states.  Good practice
 	cin.rdbuf(cinbuf);
 	cout.rdbuf(coutbuf);
 
