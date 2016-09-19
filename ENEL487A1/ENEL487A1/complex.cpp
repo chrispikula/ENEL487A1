@@ -22,7 +22,7 @@ using std::cin;
 using std::ofstream;
 using std::ifstream;
 using std::streambuf;
-
+using std::istringstream;
 
 struct Complex 
 /**
@@ -264,16 +264,25 @@ Our main program
 	string input;
 	Complex result;
 	MathOperation parsedInput;
-	ofstream batchOutput;
+
 	streambuf *coutbuf = cout.rdbuf();
 	streambuf *cinbuf = cin.rdbuf();
+	//saving our stream buffers, incase we need to swap
+	//them to file stream buffers.
+	
+	ofstream batchOutput;
 	ifstream batchInput;
-		if (!(argc == 3 || argc == 1))
+	//declaring our possible instances of our input and 
+	//output files
+	
+	if (!(argc == 3 || argc == 1))
+	{
 		usage(argv[0]);
+	}
 	if (argc == 3)
 	{
-		std::istringstream ss1(argv[1]);
-		std::istringstream ss2(argv[2]);
+		istringstream ss1(argv[1]);
+		istringstream ss2(argv[2]);
 		string firstArgument = "/n";
 		string secondArgument = "/n";
 		ss1 >> firstArgument;
@@ -291,6 +300,9 @@ Our main program
 			exit(1);
 		}
 
+		//batchMode is 'file-io' mode.
+		//therefore we need to redirect cin
+		//and cout to our file rdbuf()'s.
 		batchMode = true;
 		batchInput.open(firstArgument.c_str());
 		batchOutput.open(secondArgument.c_str());
@@ -301,13 +313,19 @@ Our main program
 	if (batchMode == false)
 	{
 		consoleText();
+		//we only want to output to the console if
+		//we require console input
 	}
 	
 	do
 	{
 		if (cin.eof() == false)
+			//This will only be triggered in batch mode, 
+			//will still be 'checked' and 'false' in 
+			//normal mode.
 		{
-			getline(cin, input);
+			getline(cin, input); 
+			//can be used in either normal, or batch mode.
 		}
 		else
 		{
@@ -328,6 +346,7 @@ Our main program
 
 		cout << result;
 	} while (true);
+
 	batchInput.close();
 	batchOutput.close();
 
